@@ -1,8 +1,9 @@
 const express = require('express')
+
 const app = express()
 
 app.get('/', (req, res) => {
-  res.json('Hello')
+  res.json('Hello Browser')
 })
 
 app.post('/', (req, res) => {
