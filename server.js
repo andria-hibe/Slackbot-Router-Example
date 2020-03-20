@@ -2,10 +2,10 @@ const express = require('express')
 
 const sample = require('./routes/sample')
 
-const server = express()
+const app = express()
 
-server.use(express.json())
+app.use(express.json())
 
-server.use('/api/v1/sample', users)
+app.use('/', sample)
 
-module.exports = server
+module.exports = app

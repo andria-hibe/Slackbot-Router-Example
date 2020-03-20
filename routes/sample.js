@@ -1,8 +1,12 @@
 const express = require('express')
-const server = express()
+const app = express()
 
-server.post('/', (req, res) => {
+app.get('/', (req, res) => {
+  res.send('Hello')
+})
+
+app.post('/', (req, res) => {
   res.send('Hello Slack')
 })
 
-module.exports = server
+module.exports = app
