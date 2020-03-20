@@ -6,6 +6,6 @@ const app = express()
 
 app.use(express.json())
 
-app.use('/', sample)
+app.use('/api/sample', sample)
 
 module.exports = app
