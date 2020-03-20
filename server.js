@@ -13,12 +13,6 @@ app.post('/api/sample', (req, res) => {
 })
 
 // Github Route
-app.post('/api/github', (req, res) => {
-  fetch(githubURL)
-    .then(labels => labels.json())
-    .then(json => res.json(json))
-})
-
 app.post('/api/github', async (req, res) => {  
   const githubResponse = await fetch(githubURL)
   const githubJSON = await githubResponse.json()
