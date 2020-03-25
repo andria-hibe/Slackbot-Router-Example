@@ -7,28 +7,46 @@ const githubURL = 'https://api.github.com/repos/hotosm/tasking-manager/issues?st
 
 app.use(express.json())
 
-// Sample Route
-app.post('/api/sample', (req, res) => {
-  res.json('Hello Slack')
-})
-
-// Github Route
 app.post('/api/github', async (req, res) => {  
   const githubResponse = await fetch(githubURL)
   const githubJSON = await githubResponse.json()
 
-  const githubArray = githubJSON.map(issue => {
+  const githubSample = githubJSON.map(issue => {
     return {
-      url: issue.url,
-      number: issue.number,
-      title: issue.title,
-      openedBy: issue.user.login,
-      labels: issue.labels.map(label => label.name),
-      openedOn: issue.created_at
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `${issue.number} - <${issue.url}|*${issue.title}*>`
+          }
+        },
+        {
+          type: "section",
+          fields: issue.labels.map(label => {
+            return {
+              type: "plain_text",
+              text: label.name
+            }
+          })
+        },
+        {
+          type: "context",
+          elements: [
+            {
+              type: "mrkdwn",
+              text: `Opened at ${issue.created_at} by user ${issue.user.login}`
+            }
+          ]
+        },
+        {
+          type: "divider"
+        }
+      ]
     }
   })
 
-  res.json(githubArray)
+  res.json(githubSample[0])
 })
 
 module.exports = app
