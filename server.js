@@ -17,7 +17,18 @@ app.post('/api/github', async (req, res) => {
   const githubResponse = await fetch(githubURL)
   const githubJSON = await githubResponse.json()
 
-  res.json(githubJSON)
+  const githubArray = githubJSON.map(issue => {
+    return {
+      url: issue.url,
+      number: issue.number,
+      title: issue.title,
+      openedBy: issue.user.login,
+      labels: issue.labels.map(label => label.name),
+      openedOn: issue.created_at
+    }
+  })
+
+  res.json(githubArray)
 })
 
 module.exports = app
