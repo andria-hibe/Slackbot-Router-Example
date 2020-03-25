@@ -7,19 +7,21 @@ const githubURL = 'https://api.github.com/repos/hotosm/tasking-manager/issues?st
 
 app.use(express.json())
 
+
+// Route for all open issues with Difficulty:Easy label
 app.post('/api/github', async (req, res) => {  
   const githubResponse = await fetch(githubURL)
   const githubJSON = await githubResponse.json()
 
   const githubSample = githubJSON.map(issue => {
-    return {
-      blocks: [
+    return (
+      [
         {
-          type: "section",
-          text: {
-            type: "mrkdwn",
-            text: `${issue.number} - <${issue.url}|*${issue.title}*>`
-          }
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `${issue.number} - <${issue.url}|*${issue.title}*>`
+        }
         },
         {
           type: "section",
@@ -43,10 +45,14 @@ app.post('/api/github', async (req, res) => {
           type: "divider"
         }
       ]
-    }
+    )
   })
 
-  res.json(githubSample[0])
+  const slackBlocks = {
+    blocks: githubSample
+  }
+
+  res.json(githubSample)
 })
 
 module.exports = app
