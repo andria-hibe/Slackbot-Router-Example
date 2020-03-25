@@ -13,15 +13,15 @@ app.post('/api/github', async (req, res) => {
   const githubResponse = await fetch(githubURL)
   const githubJSON = await githubResponse.json()
 
-  const githubSample = githubJSON.map(issue => {
-    return (
-      [
+  const easyIssues = githubJSON.reduce(
+    (accumulator, issue) => {
+      accumulator.push(
         {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `${issue.number} - <${issue.url}|*${issue.title}*>`
-        }
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `${issue.number} - <${issue.url}|*${issue.title}*>`
+          }
         },
         {
           type: "section",
@@ -44,15 +44,16 @@ app.post('/api/github', async (req, res) => {
         {
           type: "divider"
         }
-      ]
-    )
-  })
+      )
+      return accumulator
+    }, []
+  )
 
   const slackBlocks = {
-    blocks: githubSample
+    blocks: easyIssues
   }
 
-  res.json(githubSample)
+  res.json(slackBlocks)
 })
 
 module.exports = app
