@@ -35,15 +35,6 @@ app.post('/api/github', async (req, res) => {
           })
         },
         {
-          type: "context",
-          elements: [
-            {
-              type: "mrkdwn",
-              text: `Opened at ${issue.created_at} by user ${issue.user.login}`
-            }
-          ]
-        },
-        {
           type: "divider"
         }
       )
