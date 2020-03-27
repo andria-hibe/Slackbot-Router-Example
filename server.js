@@ -11,11 +11,11 @@ app.use(bodyParser.urlencoded())
 // Route for all open issues with Difficulty:Hard label right now - need to be Easy
 app.post('/api/github', async (req, res) => {  
   const responseURL = req.body.response_url
-  
+
   const githubResponse = await fetch(githubURL)
   const githubJSON = await githubResponse.json()
 
-  const easyIssues = githubJSON.reduce(
+  const issuesArray = githubJSON.reduce(
     (accumulator, issue) => {
       accumulator.push(
         {
@@ -42,11 +42,29 @@ app.post('/api/github', async (req, res) => {
     }, []
   )
 
-  const slackBlocks = {
-    blocks: easyIssues
+
+  function slackBlocks (array, size) {
+    const blocksArray = []
+
+    for (let i = 0; i < array.length; i++) {
+      const lastBlock = blocksArray[blocksArray.length - 1]
+      
+      if (!lastBlock || lastBlock.length === size) {
+        blocksArray.push([array[i]])
+      } else {
+        lastBlock.push(array[i])
+      }
+    }
+    return blocksArray
   }
 
-  res.json(slackBlocks)
+  const slackMessages = slackBlocks(issuesArray, 6)
+
+  const firstMessage = {
+    blocks: slackMessages[0]
+  }
+
+  res.json(firstMessage)
 })
 
 module.exports = app
