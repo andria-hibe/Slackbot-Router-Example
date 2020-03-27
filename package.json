@@ -15,7 +15,6 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "body-parser": "^1.19.0",
     "nodemon": "^2.0.2"
   }
 }

@@ -1,12 +1,11 @@
 const express = require('express')
 const fetch = require('node-fetch')
-const bodyParser = require('body-parser')
 
 const app = express()
 
 const githubURL = 'https://api.github.com/repos/hotosm/tasking-manager/issues?state=open;labels=Difficulty:%20Hard'
 
-app.use(bodyParser.urlencoded())
+app.use(express.urlencoded({ extended: true }))
 
 // Route for all open issues with Difficulty:Hard label right now - need to be Easy
 app.post('/api/github', async (req, res) => {  
@@ -58,13 +57,31 @@ app.post('/api/github', async (req, res) => {
     return blocksArray
   }
 
-  const slackMessages = slackBlocks(issuesArray, 6)
+  const slackMessages = slackBlocks(issuesArray, 9)
 
-  const firstMessage = {
-    blocks: slackMessages[0]
+  const sendMessage = (message) => {
+    return {
+      blocks: message
+    }
   }
 
+  const firstMessage = sendMessage(slackMessages[0])
   res.json(firstMessage)
+
+  Promise.all(slackMessages.slice(1).map(message => {
+    const nextMessage = sendMessage(message)
+
+    fetch(responseURL, {
+      method: 'post',
+      body: JSON.stringify(nextMessage),
+      headers: {'Content-Type': 'application/json'}
+    })
+      .then(res => res.json())
+
+    // fetch(responseURL, { method: 'POST', body: 'a=1' })
+    //   .then(res => res.json(nextMessage))
+    //   .then(json => console.log(json))
+  }))
 })
 
 module.exports = app
