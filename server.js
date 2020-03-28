@@ -29,6 +29,8 @@ function groupIssuesIntoMessages (array, size) {
 app.post('/api/github', async (req, res) => {  
   const responseURL = req.body.response_url
 
+  res.sendStatus(200).send()
+
   const githubResponse = await fetch(GITHUB_URL)
   const githubJSON = await githubResponse.json()
 
@@ -64,10 +66,7 @@ app.post('/api/github', async (req, res) => {
   const BLOCK_COUNT = 45
   const slackMessages = groupIssuesIntoMessages(issuesArray, BLOCK_COUNT)
 
-  const firstMessage = slackMessages[0]
-  res.json(firstMessage)
-
-  slackMessages.slice(1).map(message => {
+  slackMessages.map(message => {
     fetch(responseURL, {
       method: 'post',
       body: JSON.stringify(message),
