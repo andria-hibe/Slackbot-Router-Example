@@ -3,7 +3,7 @@ const fetch = require('node-fetch')
 
 const app = express()
 
-const GITHUB_URL = 'https://api.github.com/repos/hotosm/tasking-manager/issues?state=open;labels=Difficulty:%20Hard'
+const GITHUB_URL = 'https://api.github.com/repos/hotosm/tasking-manager/issues?state=open;labels=Difficulty:%20Easy'
 
 app.use(express.urlencoded({ extended: true }))
 
@@ -26,7 +26,6 @@ function groupIssuesIntoMessages (array, size) {
   })
 }
 
-// Route for all open issues with Difficulty:Hard label right now - need to be Easy
 app.post('/api/github', async (req, res) => {  
   const responseURL = req.body.response_url
 
@@ -35,12 +34,14 @@ app.post('/api/github', async (req, res) => {
 
   const issuesArray = githubJSON.reduce(
     (accumulator, issue) => {
+      const issueURL = 'https://' + issue.url.slice(12, 23) + issue.url.slice(29)
+
       accumulator.push(
         {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: `#${issue.number} - <${issue.url}|*${issue.title}*>`
+            text: `#${issue.number} - <${issueURL}|*${issue.title}*>`
           }
         },
         {
@@ -60,7 +61,7 @@ app.post('/api/github', async (req, res) => {
     }, []
   )
   
-  const BLOCK_COUNT = 9
+  const BLOCK_COUNT = 45
   const slackMessages = groupIssuesIntoMessages(issuesArray, BLOCK_COUNT)
 
   const firstMessage = slackMessages[0]
